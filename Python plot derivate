@@ -1,0 +1,65 @@
+# Import required libraries
+import numpy as np
+import matplotlib.pyplot as plt
+import sympy as sp
+
+def derive_and_plot():
+    """
+    Main function to demonstrate equation derivation and plotting.
+    """
+    # Step 1: Symbolic Derivation using SymPy
+    # ----------------------------------------
+    # Define the symbolic variable
+    x = sp.Symbol('x')
+    
+    # Define the equation to differentiate (change this to your desired equation)
+    # Example equation: f(x) = x^3 - 2x^2 + 5x - 3
+    equation = x**3 - 2*x**2 + 5*x - 3
+    
+    # Compute the derivative symbolically
+    derivative = sp.diff(equation, x)
+    
+    # Print the original equation and its derivative
+    print("Original equation:", equation)
+    print("First derivative:", derivative)
+    
+    # Convert the symbolic expressions to numerical functions for plotting
+    # lambdify creates a function that can evaluate the expression numerically
+    f = sp.lambdify(x, equation, 'numpy')
+    df = sp.lambdify(x, derivative, 'numpy')
+    
+    # Step 2: Numerical Evaluation
+    # ---------------------------
+    # Create an array of x values for evaluation and plotting
+    x_vals = np.linspace(-5, 5, 400)  # 400 points from -5 to 5
+    
+    # Evaluate the original function and its derivative
+    y_vals = f(x_vals)
+    dy_vals = df(x_vals)
+    
+    # Step 3: Plotting
+    # ----------------
+    # Create a figure with two subplots
+    plt.figure(figsize=(12, 6))
+    
+    # Plot the original function
+    plt.subplot(1, 2, 1)  # 1 row, 2 columns, first plot
+    plt.plot(x_vals, y_vals, label=f'f(x) = {equation}', color='blue')
+    plt.title('Original Function')
+    plt.xlabel('x')
+    plt.ylabel('f(x)')
+    plt.grid(True)
+    plt.legend()
+    
+    # Plot the derivative
+    plt.subplot(1, 2, 2)  # 1 row, 2 columns, second plot
+    plt.plot(x_vals, dy_vals, label=f"f'(x) = {derivative}", color='red')
+    plt.title('First Derivative')
+    plt.xlabel('x')
+    plt.ylabel("f'(x)")
+    plt.grid(True)
+    plt.legend()
+    
+    # Adjust layout and display the plot
+    plt.tight_layout()
+    plt.show()

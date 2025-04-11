@@ -1,0 +1,104 @@
+# Import required libraries
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier, export_text, plot_tree
+from sklearn.preprocessing import LabelEncoder
+import matplotlib.pyplot as plt
+
+def create_decision_tree():
+    """
+    Main function to create and visualize a decision tree classifier
+    based on weather conditions to predict an outcome (1 or 0).
+    """
+    
+    # Step 1: Create Sample Dataset
+    # ----------------------------
+    # We'll create synthetic data with three features:
+    # 1. Weather (Sunny, Rainy, Cloudy)
+    # 2. Wind (Strong, Weak)
+    # 3. Temperature (Hot, Mild, Cool)
+    # And a binary output (1 = favorable, 0 = unfavorable)
+    
+    data = {
+        'Weather': ['Sunny', 'Sunny', 'Cloudy', 'Rainy', 'Rainy', 'Cloudy', 'Sunny', 
+                   'Cloudy', 'Rainy', 'Sunny', 'Rainy', 'Cloudy', 'Cloudy', 'Sunny'],
+        'Wind': ['Weak', 'Strong', 'Weak', 'Weak', 'Strong', 'Strong', 'Weak', 
+                'Strong', 'Strong', 'Weak', 'Weak', 'Weak', 'Strong', 'Weak'],
+        'Temperature': ['Hot', 'Hot', 'Mild', 'Mild', 'Cool', 'Cool', 'Mild', 
+                       'Hot', 'Mild', 'Cool', 'Mild', 'Hot', 'Mild', 'Mild'],
+        'Output': [0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1]
+    }
+    
+    # Convert to DataFrame
+    df = pd.DataFrame(data)
+    print("Original Dataset:")
+    print(df)
+    print("\n")
+    
+    # Step 2: Preprocess the Data
+    # ---------------------------
+    # Convert categorical features to numerical values using Label Encoding
+    
+    # Initialize label encoders for each categorical column
+    weather_encoder = LabelEncoder()
+    wind_encoder = LabelEncoder()
+    temp_encoder = LabelEncoder()
+    
+    # Transform categorical values to numerical
+    df['Weather_encoded'] = weather_encoder.fit_transform(df['Weather'])
+    df['Wind_encoded'] = wind_encoder.fit_transform(df['Wind'])
+    df['Temperature_encoded'] = temp_encoder.fit_transform(df['Temperature'])
+    
+    # Print mapping for reference
+    print("Weather classes:", list(weather_encoder.classes_))
+    print("Wind classes:", list(wind_encoder.classes_))
+    print("Temperature classes:", list(temp_encoder.classes_))
+    print("\n")
+    
+    # Prepare features (X) and target (y)
+    X = df[['Weather_encoded', 'Wind_encoded', 'Temperature_encoded']]
+    y = df['Output']
+    
+    # Step 3: Create and Train Decision Tree
+    # -------------------------------------
+    # Initialize the Decision Tree Classifier
+    # Parameters:
+    # - max_depth: controls tree depth (None for unlimited)
+    # - random_state: for reproducibility
+    tree_clf = DecisionTreeClassifier(max_depth=3, random_state=42)
+    
+    # Train the model
+    tree_clf.fit(X, y)
+    
+    # Step 4: Visualize the Decision Tree
+    # -----------------------------------
+    # Option 1: Text Representation
+    tree_rules = export_text(tree_clf, 
+                           feature_names=['Weather', 'Wind', 'Temperature'])
+    print("Decision Tree Rules:")
+    print(tree_rules)
+    
+    # Option 2: Graphical Visualization
+    plt.figure(figsize=(12, 8))
+    plot_tree(tree_clf, 
+              feature_names=['Weather', 'Wind', 'Temperature'],
+              class_names=['Unfavorable', 'Favorable'],
+              filled=True,
+              rounded=True)
+    plt.title("Decision Tree Visualization")
+    plt.show()
+    
+    # Step 5: Make Predictions with New Data
+    # -------------------------------------
+    # Example 1: Sunny, Weak Wind, Mild Temperature
+    new_data1 = [[weather_encoder.transform(['Sunny'])[0], 
+                wind_encoder.transform(['Weak'])[0],
+                temp_encoder.transform(['Mild'])[0]]]
+    prediction1 = tree_clf.predict(new_data1)
+    print("\nPrediction for [Sunny, Weak, Mild]:", prediction1[0])
+    
+    # Example 2: Rainy, Strong Wind, Cool Temperature
+    new_data2 = [[weather_encoder.transform(['Rainy'])[0], 
+                wind_encoder.transform(['Strong'])[0],
+                temp_encoder.transform(['Cool'])[0]]]
+    prediction2 = tree_clf.predict(new_data2)
+    print("Prediction for [Rainy, Strong, Cool]:", prediction2[0])

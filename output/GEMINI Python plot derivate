@@ -1,0 +1,89 @@
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+import sympy as sp
+
+def derive_and_plot():
+    """
+    Define uma equação polinomial usando a biblioteca SymPy, calcula sua primeira
+    derivada simbolicamente, imprime a equação original e sua derivada,
+    converte ambas as expressões simbólicas em funções numéricas usando NumPy,
+    gera um array de valores x para plotagem, calcula os valores y correspondentes
+    para a função original e sua derivada, e finalmente plota ambas as funções
+    em subgráficos separados usando Matplotlib.
+    """
+
+    # Define o símbolo 'x' para uso em expressões simbólicas com SymPy.
+    x = sp.Symbol('x')
+
+    # Define a equação polinomial que será diferenciada.
+    equation = x**3 - 2*x**2 + 5*x - 3
+
+    # Calcula a primeira derivada da 'equation' em relação a 'x' usando a função 'sp.diff()'.
+    derivative = sp.diff(equation, x)
+
+    # Imprime a equação original para o usuário.
+    print("Original equation:", equation)
+    # Imprime a primeira derivada da equação para o usuário.
+    print("First derivative:", derivative)
+
+    # Converte a expressão simbólica da 'equation' em uma função numérica que pode ser avaliada
+    # com arrays NumPy usando 'sp.lambdify()'. O argumento 'numpy' especifica o backend numérico.
+    f = sp.lambdify(x, equation, 'numpy')
+    # Converte a expressão simbólica da 'derivative' em uma função numérica de forma semelhante.
+    df = sp.lambdify(x, derivative, 'numpy')
+
+    # Cria um array NumPy de 400 pontos linearmente espaçados entre -5 e 5.
+    # Esses valores de 'x' serão usados para plotar as funções.
+    x_vals = np.linspace(-5, 5, 400)
+
+    # Calcula os valores de 'y' para a função original ('f') usando o array de valores 'x'.
+    y_vals = f(x_vals)
+    # Calcula os valores de 'y' para a primeira derivada ('df') usando o mesmo array de valores 'x'.
+    dy_vals = df(x_vals)
+
+    # Cria uma nova figura com um tamanho específico (largura 12 polegadas, altura 6 polegadas) para a plotagem.
+    plt.figure(figsize=(12, 6))
+
+    # Cria o primeiro subgráfico em uma grade de 1 linha e 2 colunas, e o torna o gráfico ativo (índice 1).
+    plt.subplot(1, 2, 1)
+    # Plota os valores de 'x' contra os valores de 'y' (função original).
+    # 'label' define a legenda do gráfico, formatada para incluir a equação original.
+    # 'color' define a cor da linha do gráfico.
+    plt.plot(x_vals, y_vals, label=f'f(x) = {equation}', color='blue')
+    # Define o título do primeiro subgráfico.
+    plt.title('Original Function')
+    # Define o rótulo do eixo x.
+    plt.xlabel('x')
+    # Define o rótulo do eixo y.
+    plt.ylabel('f(x)')
+    # Ativa a grade no gráfico.
+    plt.grid(True)
+    # Exibe a legenda no gráfico.
+    plt.legend()
+
+    # Cria o segundo subgráfico na mesma grade (1 linha, 2 colunas), e o torna o gráfico ativo (índice 2).
+    plt.subplot(1, 2, 2)
+    # Plota os valores de 'x' contra os valores de 'dy' (primeira derivada).
+    # 'label' define a legenda do gráfico, formatada para incluir a expressão da derivada.
+    # 'color' define a cor da linha do gráfico.
+    plt.plot(x_vals, dy_vals, label=f"f'(x) = {derivative}", color='red')
+    # Define o título do segundo subgráfico.
+    plt.title('First Derivative')
+    # Define o rótulo do eixo x.
+    plt.xlabel('x')
+    # Define o rótulo do eixo y.
+    plt.ylabel("f'(x)")
+    # Ativa a grade no gráfico.
+    plt.grid(True)
+    # Exibe a legenda no gráfico.
+    plt.legend()
+
+    # Ajusta o espaçamento entre os subgráficos para evitar sobreposição de rótulos.
+    plt.tight_layout()
+    # Exibe a figura com os subgráficos plotados.
+    plt.show()
+
+# Chama a função 'derive_and_plot' para executar a derivação e a plotagem.
+derive_and_plot()
+```

@@ -1,0 +1,60 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import sympy as sp
+
+def derive_and_plot():
+    """
+    Deriva simbolicamente uma função polinomial, converte-a em funções numéricas
+    e plota tanto a função original quanto sua derivada.
+    """
+    
+    # Define a variável simbólica x para a expressão matemática
+    x = sp.Symbol('x')
+
+    # Define a equação simbólica a ser analisada
+    equation = x**3 - 2*x**2 + 5*x - 3
+
+    # Calcula a derivada da equação em relação a x
+    derivative = sp.diff(equation, x)
+
+    # Exibe a equação original e sua derivada no console
+    print("Original equation:", equation)
+    print("First derivative:", derivative)
+
+    # Converte as expressões simbólicas para funções que aceitam arrays NumPy
+    f = sp.lambdify(x, equation, 'numpy')      # Função original
+    df = sp.lambdify(x, derivative, 'numpy')   # Derivada da função
+
+    # Gera valores de x no intervalo de -5 a 5 com 400 pontos igualmente espaçados
+    x_vals = np.linspace(-5, 5, 400)
+    
+    # Calcula os valores da função original e da derivada para o intervalo de x
+    y_vals = f(x_vals)
+    dy_vals = df(x_vals)
+    
+    # Configura a figura com 2 gráficos lado a lado
+    plt.figure(figsize=(12, 6))
+
+    # Primeiro subplot: gráfico da função original
+    plt.subplot(1, 2, 1) 
+    plt.plot(x_vals, y_vals, label=f'f(x) = {equation}', color='blue')
+    plt.title('Original Function')      # Título do gráfico
+    plt.xlabel('x')                     # Rótulo do eixo x
+    plt.ylabel('f(x)')                  # Rótulo do eixo y
+    plt.grid(True)                      # Ativa a grade no gráfico
+    plt.legend()                        # Exibe a legenda com a equação
+
+    # Segundo subplot: gráfico da derivada da função
+    plt.subplot(1, 2, 2)  
+    plt.plot(x_vals, dy_vals, label=f"f'(x) = {derivative}", color='red')
+    plt.title('First Derivative')       # Título do gráfico
+    plt.xlabel('x')                     # Rótulo do eixo x
+    plt.ylabel("f'(x)")                 # Rótulo do eixo y
+    plt.grid(True)                      # Ativa a grade no gráfico
+    plt.legend()                        # Exibe a legenda com a derivada
+
+    # Ajusta o layout para evitar sobreposição
+    plt.tight_layout()
+    
+    # Exibe os gráficos gerados
+    plt.show()

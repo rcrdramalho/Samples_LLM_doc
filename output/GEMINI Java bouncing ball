@@ -1,0 +1,145 @@
+```java
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+/**
+ * BouncingBallAnimation - Cria uma janela com uma bola quicando dentro de um painel quadrado
+ */
+public class BouncingBallAnimation {
+
+    /**
+     * Método principal para iniciar a aplicação.
+     * @param args Argumentos da linha de comando (não utilizados neste caso).
+     */
+    public static void main(String[] args) {
+        // Garante que a interface gráfica seja criada e atualizada na thread de despacho de eventos (Event Dispatch Thread - EDT).
+        // Isso é importante para a responsividade da aplicação Swing.
+        SwingUtilities.invokeLater(() -> {
+            // Cria uma nova janela JFrame com o título "Bouncing Ball".
+            JFrame frame = new JFrame("Bouncing Ball");
+            // Define a operação padrão de fechamento da janela para encerrar a aplicação quando a janela for fechada.
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            // Define o tamanho inicial da janela para 400 pixels de largura e 400 pixels de altura.
+            frame.setSize(400, 400);
+
+            // Cria uma instância do painel BouncingBallPanel, que contém a lógica da animação da bola.
+            BouncingBallPanel ballPanel = new BouncingBallPanel();
+            // Adiciona o painel ballPanel ao conteúdo da janela frame.
+            frame.add(ballPanel);
+
+            // Torna a janela visível ao usuário.
+            frame.setVisible(true);
+        });
+    }
+}
+
+/**
+ * Custom JPanel que lida com a animação da bola.
+ */
+class BouncingBallPanel extends JPanel {
+
+    // Propriedades da bola
+    private int x = 100;             // Posição X atual da bola
+    private int y = 100;             // Posição Y atual da bola
+    private final int diameter = 30; // Diâmetro da bola (constante)
+    private int dx = 2;              // Velocidade horizontal da bola (pixels por frame)
+    private int dy = 2;              // Velocidade vertical da bola (pixels por frame)
+
+    // Timer para controlar a animação
+    private final Timer timer;
+
+    /**
+     * Construtor da classe BouncingBallPanel. Inicializa o painel e o timer da animação.
+     */
+    public BouncingBallPanel() {
+        // Define o tamanho preferido do painel para 400 pixels de largura e 400 pixels de altura.
+        // Isso ajuda o gerenciador de layout a determinar o tamanho inicial do painel.
+        this.setPreferredSize(new Dimension(400, 400));
+
+        // Cria um novo Timer com um atraso de 25 milissegundos entre cada frame da animação.
+        // O ActionListener associado ao timer é executado a cada intervalo.
+        timer = new Timer(25, new ActionListener() {
+            /**
+             * Método actionPerformed é chamado a cada intervalo do timer.
+             * @param e O evento de ação disparado pelo timer.
+             */
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Atualiza a posição da bola.
+                updatePosition();
+                // Solicita que o painel seja repintado. Isso chama o método paintComponent.
+                repaint();
+            }
+        });
+        // Inicia o timer, fazendo com que os eventos de ação comecem a ser disparados.
+        timer.start();
+    }
+
+    /**
+     * Atualiza a posição da bola e lida com as colisões com as paredes do painel.
+     */
+    private void updatePosition() {
+        // Obtém a largura atual do painel.
+        int panelWidth = getWidth();
+        // Obtém a altura atual do painel.
+        int panelHeight = getHeight();
+
+        // Atualiza a posição X da bola adicionando a velocidade horizontal (dx).
+        x += dx;
+        // Verifica se a bola atingiu as bordas horizontais do painel.
+        if (x <= 0 || x + diameter >= panelWidth) {
+            // Inverte a direção horizontal da bola multiplicando a velocidade horizontal por -1.
+            dx = -dx;
+            // Garante que a bola permaneça dentro das bordas horizontais, evitando que ela desapareça.
+            x = Math.max(0, Math.min(x, panelWidth - diameter));
+        }
+
+        // Atualiza a posição Y da bola adicionando a velocidade vertical (dy).
+        y += dy;
+        // Verifica se a bola atingiu as bordas verticais do painel.
+        if (y <= 0 || y + diameter >= panelHeight) {
+            // Inverte a direção vertical da bola multiplicando a velocidade vertical por -1.
+            dy = -dy;
+            // Garante que a bola permaneça dentro das bordas verticais, evitando que ela desapareça.
+            y = Math.max(0, Math.min(y, panelHeight - diameter));
+        }
+    }
+
+    /**
+     * Método responsável por desenhar os componentes no painel (fundo, bola e borda).
+     * Este método é chamado automaticamente quando repaint() é invocado.
+     * @param g O objeto Graphics utilizado para desenhar.
+     */
+    @Override
+    protected void paintComponent(Graphics g) {
+        // Chama o método paintComponent da superclasse (JPanel) para garantir que o painel seja desenhado corretamente,
+        // incluindo a limpeza da área de desenho.
+        super.paintComponent(g);
+        // Cria uma instância de Graphics2D a partir do objeto Graphics para permitir o uso de recursos de desenho mais avançados.
+        Graphics2D g2d = (Graphics2D) g;
+
+        // Ativa o anti-aliasing para suavizar as bordas dos desenhos (círculo da bola).
+        g2d.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON
+        );
+
+        // Desenha o fundo do painel na cor branca.
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, getWidth(), getHeight());
+
+        // Desenha a bola quicando na cor vermelha.
+        g2d.setColor(Color.RED);
+        // Desenha um círculo preenchido (oval) nas coordenadas (x, y) com o diâmetro especificado.
+        g2d.fillOval(x, y, diameter, diameter);
+
+        // Desenha a borda do contêiner (painel) na cor preta.
+        g2d.setColor(Color.BLACK);
+        // Desenha um retângulo sem preenchimento nas bordas do painel.
+        // Subtrai 1 da largura e altura para que a borda fique visível dentro dos limites do painel.
+        g2d.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+    }
+}
+```

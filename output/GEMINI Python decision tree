@@ -1,0 +1,110 @@
+```python
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier, export_text, plot_tree
+from sklearn.preprocessing import LabelEncoder
+import matplotlib.pyplot as plt
+
+def create_decision_tree():
+    """
+    Cria um modelo de árvore de decisão para prever uma saída binária
+    baseada em condições climáticas (Weather), vento (Wind) e temperatura (Temperature).
+    O dataset é criado diretamente no código, as features categóricas são
+    codificadas usando LabelEncoder, a árvore de decisão é treinada,
+    as regras da árvore são impressas em formato de texto, a árvore é visualizada
+    e são feitas previsões para novos dados.
+    """
+
+    # Define os dados em um dicionário Python.
+    data = {
+        'Weather': ['Sunny', 'Sunny', 'Cloudy', 'Rainy', 'Rainy', 'Cloudy', 'Sunny',
+                    'Cloudy', 'Rainy', 'Sunny', 'Rainy', 'Cloudy', 'Cloudy', 'Sunny'],
+        'Wind': ['Weak', 'Strong', 'Weak', 'Weak', 'Strong', 'Strong', 'Weak',
+                 'Strong', 'Strong', 'Weak', 'Weak', 'Weak', 'Strong', 'Weak'],
+        'Temperature': ['Hot', 'Hot', 'Mild', 'Mild', 'Cool', 'Cool', 'Mild',
+                        'Hot', 'Mild', 'Cool', 'Mild', 'Hot', 'Mild', 'Mild'],
+        'Output': [0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1]
+    }
+
+    # Cria um DataFrame pandas a partir do dicionário de dados.
+    df = pd.DataFrame(data)
+    print("Original Dataset:")
+    print(df)
+    print("\n")
+
+    # Cria instâncias de LabelEncoder para cada coluna categórica.
+    weather_encoder = LabelEncoder()
+    wind_encoder = LabelEncoder()
+    temp_encoder = LabelEncoder()
+
+    # Aplica a codificação Label Encoding nas colunas 'Weather', 'Wind' e 'Temperature'
+    # e cria novas colunas com os valores codificados.
+    df['Weather_encoded'] = weather_encoder.fit_transform(df['Weather'])
+    df['Wind_encoded'] = wind_encoder.fit_transform(df['Wind'])
+    df['Temperature_encoded'] = temp_encoder.fit_transform(df['Temperature'])
+
+    # Imprime as classes originais e seus respectivos códigos para cada feature.
+    print("Weather classes:", list(weather_encoder.classes_))
+    print("Wind classes:", list(wind_encoder.classes_))
+    print("Temperature classes:", list(temp_encoder.classes_))
+    print("\n")
+
+    # Define as features (X) como as colunas codificadas.
+    X = df[['Weather_encoded', 'Wind_encoded', 'Temperature_encoded']]
+    # Define a variável alvo (y) como a coluna 'Output'.
+    y = df['Output']
+
+    # Cria uma instância do classificador de árvore de decisão.
+    # 'max_depth' limita a profundidade da árvore para evitar overfitting e melhorar a interpretabilidade.
+    # 'random_state' garante que a divisão dos nós seja determinística, facilitando a reprodução dos resultados.
+    tree_clf = DecisionTreeClassifier(max_depth=3, random_state=42)
+
+    # Treina o modelo da árvore de decisão usando as features codificadas (X) e a variável alvo (y).
+    tree_clf.fit(X, y)
+
+    # Exporta as regras da árvore de decisão em formato de texto.
+    # 'feature_names' associa os índices das colunas codificadas aos seus nomes originais para melhor interpretação.
+    tree_rules = export_text(tree_clf,
+                                   feature_names=['Weather', 'Wind', 'Temperature'])
+    print("Decision Tree Rules:")
+    print(tree_rules)
+    print("\n")
+
+    # Cria uma figura e um conjunto de eixos para plotar a árvore de decisão.
+    plt.figure(figsize=(12, 8))
+    # Plota a árvore de decisão.
+    # 'tree_clf' é o modelo treinado.
+    # 'feature_names' são os nomes das features para os nós da árvore.
+    # 'class_names' são os nomes das classes da variável alvo.
+    # 'filled=True' colore os nós de acordo com a classe majoritária.
+    # 'rounded=True' deixa as bordas dos nós arredondadas.
+    plot_tree(tree_clf,
+              feature_names=['Weather', 'Wind', 'Temperature'],
+              class_names=['Unfavorable', 'Favorable'],
+              filled=True,
+              rounded=True)
+    # Define o título da visualização da árvore.
+    plt.title("Decision Tree Visualization")
+    # Exibe a visualização da árvore.
+    plt.show()
+
+    # Cria novos dados para previsão. É importante codificar esses dados usando os mesmos encoders treinados anteriormente.
+    new_data1 = [[weather_encoder.transform(['Sunny'])[0],
+                    wind_encoder.transform(['Weak'])[0],
+                    temp_encoder.transform(['Mild'])[0]]]
+    # Realiza a previsão para os novos dados usando o modelo treinado.
+    prediction1 = tree_clf.predict(new_data1)
+    # Imprime a previsão para o primeiro novo conjunto de dados.
+    print("\nPrediction for [Sunny, Weak, Mild]:", prediction1[0])
+
+    # Cria outro conjunto de novos dados para previsão.
+    new_data2 = [[weather_encoder.transform(['Rainy'])[0],
+                    wind_encoder.transform(['Strong'])[0],
+                    temp_encoder.transform(['Cool'])[0]]]
+    # Realiza a previsão para o segundo novo conjunto de dados.
+    prediction2 = tree_clf.predict(new_data2)
+    # Imprime a previsão para o segundo novo conjunto de dados.
+    print("Prediction for [Rainy, Strong, Cool]:", prediction2[0])
+
+# Chama a função para criar e exibir a árvore de decisão e as previsões.
+create_decision_tree()
+```

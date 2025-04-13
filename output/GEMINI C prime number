@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+
+/**
+ * @brief Programa principal que solicita ao usuário um inteiro positivo e
+ * determina se o número é primo ou não.
+ *
+ * @return 0 se o programa for executado com sucesso.
+ */
+int main() {
+
+    // Declara três variáveis inteiras:
+    // 'n' para armazenar o número inteiro positivo inserido pelo usuário.
+    // 'i' como variável de controle para o loop de verificação de divisores.
+    // 'flag' como um indicador (flag) para determinar se o número é primo (0) ou não (1).
+    int n, i, flag = 0;
+    // Solicita ao usuário que digite um número inteiro positivo.
+    printf("Enter a positive integer: ");
+    // Lê o inteiro digitado pelo usuário e armazena-o na variável 'n'.
+    scanf("%d", &n);
+
+    // Números 0 e 1 não são considerados números primos.
+    // Se 'n' for 0 ou 1, a 'flag' é definida como 1, indicando que não é primo.
+    if (n == 0 || n == 1)
+        flag = 1;
+
+    // Loop 'for' que itera de 2 até a metade de 'n'.
+    // Não é necessário verificar divisores maiores que a metade de 'n',
+    // pois se um número maior que a metade de 'n' dividir 'n',
+    // então um número menor que a metade também o faria.
+    for (i = 2; i <= n / 2; ++i) {
+
+        // Verifica se 'n' é divisível por 'i' (o resto da divisão é 0).
+        // Se 'n' for divisível por algum número 'i' dentro deste intervalo,
+        // significa que 'n' não é um número primo.
+        if (n % i == 0) {
+            // Se 'n' é divisível por 'i', define a 'flag' como 1, indicando que 'n' não é primo.
+            flag = 1;
+            // Interrompe o loop 'for' assim que um divisor é encontrado,
+            // pois já se sabe que o número não é primo. Não há necessidade de verificar outros divisores.
+            break;
+        }
+    }
+
+    // Se a 'flag' permanecer 0 após o loop, significa que nenhum divisor foi encontrado
+    // dentro do intervalo verificado (de 2 até a metade de 'n'), portanto, 'n' é um número primo.
+    if (flag == 0)
+        printf("%d is a prime number.", n);
+    // Caso contrário, se a 'flag' for 1, significa que um divisor foi encontrado,
+    // e 'n' não é um número primo.
+    else
+        printf("%d is not a prime number.", n);
+
+    // Indica que o programa foi executado com sucesso.
+    return 0;
+}
+```

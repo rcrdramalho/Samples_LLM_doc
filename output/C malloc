@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/**
+ * Programa simples para somar números inteiros informados pelo usuário.
+ * Demonstra alocação dinâmica de memória e uso básico de arrays.
+ */
+int main() {
+    int *arr;         // Ponteiro para o array de inteiros alocado dinamicamente
+    int n, sum = 0;   // 'n' armazena o número de elementos; 'sum' acumula a soma dos valores
+
+    // Solicita ao usuário o número de elementos que deseja inserir
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    // Aloca memória dinamicamente para 'n' inteiros
+    arr = (int*)malloc(n * sizeof(int));
+
+    // Verifica se a alocação foi bem-sucedida
+    if (arr == NULL) {
+        printf("Memory allocation failed!");  // Exibe mensagem de erro
+        exit(1);  // Encerra o programa com código de erro
+    }
+
+    // Solicita ao usuário que insira os 'n' inteiros
+    printf("Enter %d integers:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);  // Armazena cada número no array
+    }
+
+    // Calcula a soma de todos os inteiros no array
+    for (int i = 0; i < n; i++) {
+        sum += arr[i];  // Adiciona o valor atual à variável 'sum'
+    }
+
+    // Exibe o resultado da soma
+    printf("Sum = %d\n", sum);
+
+    // Libera a memória alocada dinamicamente
+    free(arr);
+
+    return 0;  // Encerra o programa com sucesso
+}

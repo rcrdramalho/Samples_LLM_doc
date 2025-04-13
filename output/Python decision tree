@@ -1,0 +1,107 @@
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier, export_text, plot_tree
+from sklearn.preprocessing import LabelEncoder
+import matplotlib.pyplot as plt
+
+def create_decision_tree():
+    # ----------------------------------------------------------
+    # Criação manual de um dataset simulado com características
+    # climáticas e um atributo de saída binária (0 ou 1).
+    # ----------------------------------------------------------
+    data = {
+        'Weather': ['Sunny', 'Sunny', 'Cloudy', 'Rainy', 'Rainy', 'Cloudy', 'Sunny', 
+                   'Cloudy', 'Rainy', 'Sunny', 'Rainy', 'Cloudy', 'Cloudy', 'Sunny'],
+        'Wind': ['Weak', 'Strong', 'Weak', 'Weak', 'Strong', 'Strong', 'Weak', 
+                'Strong', 'Strong', 'Weak', 'Weak', 'Weak', 'Strong', 'Weak'],
+        'Temperature': ['Hot', 'Hot', 'Mild', 'Mild', 'Cool', 'Cool', 'Mild', 
+                       'Hot', 'Mild', 'Cool', 'Mild', 'Hot', 'Mild', 'Mild'],
+        'Output': [0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1]  # Classe alvo (resultado)
+    }
+
+    # ----------------------------------------------------------
+    # Conversão do dicionário em um DataFrame do pandas.
+    # ----------------------------------------------------------
+    df = pd.DataFrame(data)
+    print("Original Dataset:")
+    print(df)
+    print("\n")
+
+    # ----------------------------------------------------------
+    # Inicializa codificadores para transformar atributos
+    # categóricos (strings) em valores numéricos.
+    # ----------------------------------------------------------
+    weather_encoder = LabelEncoder()
+    wind_encoder = LabelEncoder()
+    temp_encoder = LabelEncoder()
+
+    # ----------------------------------------------------------
+    # Aplica a codificação nos atributos categóricos.
+    # Cada novo campo recebe a versão numérica correspondente.
+    # ----------------------------------------------------------
+    df['Weather_encoded'] = weather_encoder.fit_transform(df['Weather'])
+    df['Wind_encoded'] = wind_encoder.fit_transform(df['Wind'])
+    df['Temperature_encoded'] = temp_encoder.fit_transform(df['Temperature'])
+
+    # ----------------------------------------------------------
+    # Exibe os mapeamentos das classes para futura referência.
+    # Útil para interpretação das predições.
+    # ----------------------------------------------------------
+    print("Weather classes:", list(weather_encoder.classes_))
+    print("Wind classes:", list(wind_encoder.classes_))
+    print("Temperature classes:", list(temp_encoder.classes_))
+    print("\n")
+
+    # ----------------------------------------------------------
+    # Define os dados de entrada (X) e saída (y) para o modelo.
+    # X contém apenas os atributos já codificados.
+    # ----------------------------------------------------------
+    X = df[['Weather_encoded', 'Wind_encoded', 'Temperature_encoded']]
+    y = df['Output']
+
+    # ----------------------------------------------------------
+    # Cria e treina o classificador de árvore de decisão.
+    # max_depth limita a profundidade da árvore para evitar overfitting.
+    # ----------------------------------------------------------
+    tree_clf = DecisionTreeClassifier(max_depth=3, random_state=42)
+    tree_clf.fit(X, y)
+
+    # ----------------------------------------------------------
+    # Exporta as regras da árvore em formato textual, mostrando
+    # as condições que levam a cada decisão.
+    # ----------------------------------------------------------
+    tree_rules = export_text(tree_clf, 
+                           feature_names=['Weather', 'Wind', 'Temperature'])
+    print("Decision Tree Rules:")
+    print(tree_rules)
+
+    # ----------------------------------------------------------
+    # Gera e exibe visualmente a árvore de decisão com cores,
+    # nomes dos atributos e classes.
+    # ----------------------------------------------------------
+    plt.figure(figsize=(12, 8))
+    plot_tree(tree_clf, 
+              feature_names=['Weather', 'Wind', 'Temperature'],
+              class_names=['Unfavorable', 'Favorable'],  # 0 = Desfavorável, 1 = Favorável
+              filled=True,
+              rounded=True)
+    plt.title("Decision Tree Visualization")
+    plt.show()
+
+    # ----------------------------------------------------------
+    # Exemplo de predição com novos dados (codificados).
+    # Primeiro exemplo: ['Sunny', 'Weak', 'Mild']
+    # ----------------------------------------------------------
+    new_data1 = [[weather_encoder.transform(['Sunny'])[0], 
+                wind_encoder.transform(['Weak'])[0],
+                temp_encoder.transform(['Mild'])[0]]]
+    prediction1 = tree_clf.predict(new_data1)
+    print("\nPrediction for [Sunny, Weak, Mild]:", prediction1[0])
+
+    # ----------------------------------------------------------
+    # Segundo exemplo de predição: ['Rainy', 'Strong', 'Cool']
+    # ----------------------------------------------------------
+    new_data2 = [[weather_encoder.transform(['Rainy'])[0], 
+                wind_encoder.transform(['Strong'])[0],
+                temp_encoder.transform(['Cool'])[0]]]
+    prediction2 = tree_clf.predict(new_data2)
+    print("Prediction for [Rainy, Strong, Cool]:", prediction2[0])

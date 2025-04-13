@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+/**
+ * @brief Programa principal que solicita ao usuário um número de inteiros,
+ * aloca memória dinamicamente para armazená-los, lê os inteiros,
+ * calcula a soma deles e imprime o resultado. Finalmente, libera
+ * a memória alocada.
+ *
+ * @return 0 se o programa for executado com sucesso.
+ */
+int main() {
+    // Declara um ponteiro para um array de inteiros. Inicialmente, não aponta para nenhum endereço de memória válido.
+    int *arr;
+    // Declara duas variáveis inteiras: 'n' para armazenar o número de elementos
+    // que o usuário deseja inserir e 'sum' para acumular a soma dos elementos,
+    // inicializada com zero.
+    int n, sum = 0;
+
+    // Solicita ao usuário que digite o número de elementos que deseja inserir no array.
+    printf("Enter number of elements: ");
+    // Lê o inteiro digitado pelo usuário e armazena-o na variável 'n'.
+    scanf("%d", &n);
+
+    // Aloca dinamicamente um bloco de memória para armazenar 'n' inteiros.
+    // 'malloc' retorna um ponteiro para o primeiro byte do bloco de memória alocado.
+    // A conversão para '(int*)' é feita para garantir que o ponteiro resultante seja do tipo correto.
+    arr = (int*)malloc(n * sizeof(int));
+
+    // Verifica se a alocação de memória foi bem-sucedida.
+    // Se 'malloc' não conseguir alocar a memória solicitada, ele retorna NULL.
+    if (arr == NULL) {
+        // Imprime uma mensagem de erro indicando que a alocação de memória falhou.
+        printf("Memory allocation failed!");
+        // Termina a execução do programa com um código de erro (1), indicando uma falha.
+        exit(1);
+    }
+
+    // Informa ao usuário quantos inteiros ele precisa digitar.
+    printf("Enter %d integers:\n", n);
+    // Loop 'for' que itera 'n' vezes para ler cada inteiro digitado pelo usuário.
+    for (int i = 0; i < n; i++) {
+        // Lê um inteiro digitado pelo usuário e armazena-o na i-ésima posição do array 'arr'.
+        // A notação 'arr[i]' é equivalente a '*(arr + i)', acessando o elemento no deslocamento 'i' a partir do endereço base de 'arr'.
+        scanf("%d", &arr[i]);
+    }
+
+    // Loop 'for' que itera por todos os elementos do array para calcular a soma.
+    for (int i = 0; i < n; i++) {
+        // Adiciona o valor do i-ésimo elemento do array à variável 'sum'.
+        sum += arr[i];
+    }
+
+    // Imprime o valor final da soma dos elementos do array.
+    printf("Sum = %d\n", sum);
+
+    // Libera o bloco de memória que foi alocado dinamicamente para o array 'arr'.
+    // É crucial liberar a memória alocada com 'malloc' quando ela não é mais necessária
+    // para evitar vazamentos de memória.
+    free(arr);
+
+    // Indica que o programa foi executado com sucesso.
+    return 0;
+}
+```

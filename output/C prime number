@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+int main(){
+
+  int n, i, flag = 0;
+
+  // Solicita ao usuário que insira um número inteiro positivo
+  printf("Enter a positive integer: ");
+  scanf("%d", &n);
+
+  // 0 e 1 não são números primos por definição
+  // Define a flag como 1 para indicar que o número não é primo
+  if (n == 0 || n == 1)
+    flag = 1;
+
+  // Loop para verificar se o número é divisível por algum valor entre 2 e n/2
+  // Se for divisível, não é primo e a flag será atualizada
+  for (i = 2; i <= n / 2; ++i) {
+    if (n % i == 0) {
+      // Encontrou um divisor — número não é primo
+      flag = 1;
+      break; // Sai do loop pois já sabemos que não é primo
+    }
+  }
+
+  // Se a flag permanecer 0, o número é primo
+  if (flag == 0)
+    printf("%d is a prime number.", n);
+  else
+    printf("%d is not a prime number.", n);
+
+  return 0; // Fim do programa
+}

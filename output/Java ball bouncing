@@ -1,0 +1,117 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+/**
+ * Classe principal que inicia a animação da bola quicando.
+ * Usa Swing para criar a interface gráfica.
+ */
+public class BouncingBallAnimation {
+
+    public static void main(String[] args) {
+        // Garante que a interface gráfica seja criada na thread correta (EDT)
+        SwingUtilities.invokeLater(() -> {
+            // Cria a janela principal
+            JFrame frame = new JFrame("Bouncing Ball");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(400, 400);
+
+            // Cria e adiciona o painel onde a bola será desenhada e animada
+            BouncingBallPanel ballPanel = new BouncingBallPanel();
+            frame.add(ballPanel);
+            
+            // Exibe a janela
+            frame.setVisible(true);
+        });
+    }
+}
+
+/**
+ * Painel personalizado que desenha e anima uma bola vermelha quicando dentro da janela.
+ */
+class BouncingBallPanel extends JPanel {
+
+    // Coordenadas iniciais da bola
+    private int x = 100;        
+    private int y = 100;         
+    
+    private final int diameter = 30; // Diâmetro da bola
+
+    // Velocidade de movimento em cada direção (pixels por frame)
+    private int dx = 2;      
+    private int dy = 2;          
+
+    private final Timer timer; // Temporizador para controlar a animação
+
+    /**
+     * Construtor do painel. Inicializa o temporizador e configura o tamanho preferido.
+     */
+    public BouncingBallPanel() {
+        this.setPreferredSize(new Dimension(400, 400)); // Tamanho do painel
+
+        // Cria o timer com intervalo de 25 ms (~40 frames por segundo)
+        timer = new Timer(25, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updatePosition(); // Atualiza posição da bola
+                repaint();        // Redesenha o painel
+            }
+        });
+        timer.start(); // Inicia a animação
+    }
+
+    /**
+     * Atualiza a posição da bola e verifica colisões com as bordas do painel.
+     * Inverte a direção da bola ao colidir com as bordas.
+     */
+    private void updatePosition() {
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
+
+        // Atualiza coordenada x e trata colisão horizontal
+        x += dx;
+        if (x <= 0 || x + diameter >= panelWidth) {
+            dx = -dx; // Inverte direção horizontal
+            // Garante que a bola não ultrapasse os limites
+            x = Math.max(0, Math.min(x, panelWidth - diameter));
+        }
+
+        // Atualiza coordenada y e trata colisão vertical
+        y += dy;
+        if (y <= 0 || y + diameter >= panelHeight) {
+            dy = -dy; // Inverte direção vertical
+            // Garante que a bola não ultrapasse os limites
+            y = Math.max(0, Math.min(y, panelHeight - diameter));
+        }
+    }
+
+    /**
+     * Método sobrescrito que desenha a bola na tela.
+     * Utiliza anti-aliasing para melhor qualidade visual.
+     */
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g); // Limpa o painel antes de desenhar
+
+        Graphics2D g2d = (Graphics2D) g;
+
+        // Ativa anti-aliasing para bordas mais suaves
+        g2d.setRenderingHint(
+            RenderingHints.KEY_ANTIALIASING,
+            RenderingHints.VALUE_ANTIALIAS_ON
+        );
+
+        // Pinta o fundo de branco
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, getWidth(), getHeight());
+
+        // Desenha a bola vermelha
+        g2d.setColor(Color.RED);
+        g2d.fillOval(x, y, diameter, diameter);
+
+        // Desenha uma borda preta ao redor do painel
+        g2d.setColor(Color.BLACK);
+        g2d.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+    }
+}

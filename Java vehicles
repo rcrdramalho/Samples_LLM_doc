@@ -121,7 +121,7 @@ class Car extends LandVehicle {
      */
     public Car(String make, String model, int year, String fuelType, 
               String transmissionType, int doorCount, String bodyStyle) {
-        super(make, model, year, fuelType, 4, transmissionType); // Cars have 4 wheels
+        super(make, model, year, fuelType, 4, transmissionType);
         this.doorCount = doorCount;
         this.bodyStyle = bodyStyle;
     }

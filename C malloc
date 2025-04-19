@@ -8,7 +8,6 @@ int main() {
     printf("Enter number of elements: ");
     scanf("%d", &n);
 
-    // Allocating memory for 'n' integers
     arr = (int*)malloc(n * sizeof(int));
 
     if (arr == NULL) {
@@ -21,14 +20,12 @@ int main() {
         scanf("%d", &arr[i]);
     }
 
-    // Calculating the sum of the integers
     for (int i = 0; i < n; i++) {
         sum += arr[i];
     }
 
     printf("Sum = %d\n", sum);
 
-    // Releasing the allocated memory
     free(arr);
 
     return 0;

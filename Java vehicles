@@ -1,9 +1,4 @@
-/**
- * Main abstract Vehicle class that serves as the base for all vehicle types
- * Contains common properties and methods for all vehicles
- */
 abstract class Vehicle {
-    // Protected properties accessible by subclasses
     protected String make;
     protected String model;
     protected int year;
@@ -12,8 +7,6 @@ abstract class Vehicle {
     /**
      * Constructor for base Vehicle class
      * @param make Manufacturer of the vehicle
-     * @param model Model name/number
-     * @param year Year of manufacture
      * @param fuelType Type of fuel the vehicle uses
      */
     public Vehicle(String make, String model, int year, String fuelType) {
@@ -23,27 +16,17 @@ abstract class Vehicle {
         this.fuelType = fuelType;
     }
     
-    // Abstract method to be implemented by subclasses
     public abstract void displayDetails();
     
-    /**
-     * Common method to start the vehicle
-     */
     public void startEngine() {
         System.out.println("Starting the engine of " + make + " " + model);
     }
     
-    /**
-     * Common method to stop the vehicle
-     */
     public void stopEngine() {
         System.out.println("Stopping the engine of " + make + " " + model);
     }
 }
 
-/**
- * LandVehicle class extending Vehicle for vehicles that operate on land
- */
 class LandVehicle extends Vehicle {
     protected int numberOfWheels;
     protected String transmissionType;
@@ -51,10 +34,6 @@ class LandVehicle extends Vehicle {
     /**
      * Constructor for LandVehicle
      * @param make Manufacturer
-     * @param model Model
-     * @param year Year
-     * @param fuelType Fuel type
-     * @param numberOfWheels How many wheels the vehicle has
      * @param transmissionType Type of transmission (Automatic/Manual)
      */
     public LandVehicle(String make, String model, int year, String fuelType, 
@@ -73,9 +52,6 @@ class LandVehicle extends Vehicle {
     }
 }
 
-/**
- * WaterVehicle class extending Vehicle for vehicles that operate on water
- */
 class WaterVehicle extends Vehicle {
     protected boolean hasSail;
     protected double displacement;
@@ -83,10 +59,6 @@ class WaterVehicle extends Vehicle {
     /**
      * Constructor for WaterVehicle
      * @param make Manufacturer
-     * @param model Model
-     * @param year Year
-     * @param fuelType Fuel type
-     * @param hasSail Whether the vehicle has sails
      * @param displacement Water displacement in tons
      */
     public WaterVehicle(String make, String model, int year, String fuelType, 
@@ -104,17 +76,11 @@ class WaterVehicle extends Vehicle {
         System.out.println("Displacement: " + displacement + " tons");
     }
     
-    /**
-     * Special method for water vehicles to drop anchor
-     */
     public void dropAnchor() {
         System.out.println("Dropping anchor for " + make + " " + model);
     }
 }
 
-/**
- * AirVehicle class extending Vehicle for vehicles that operate in air
- */
 class AirVehicle extends Vehicle {
     protected int maxAltitude;
     protected int engineCount;
@@ -122,11 +88,7 @@ class AirVehicle extends Vehicle {
     /**
      * Constructor for AirVehicle
      * @param make Manufacturer
-     * @param model Model
-     * @param year Year
-     * @param fuelType Fuel type
      * @param maxAltitude Maximum altitude in feet
-     * @param engineCount Number of engines
      */
     public AirVehicle(String make, String model, int year, String fuelType, 
                      int maxAltitude, int engineCount) {
@@ -143,17 +105,11 @@ class AirVehicle extends Vehicle {
         System.out.println("Engine Count: " + engineCount);
     }
     
-    /**
-     * Special method for air vehicles to take off
-     */
     public void takeOff() {
         System.out.println(make + " " + model + " is taking off!");
     }
 }
 
-/**
- * Concrete Car class extending LandVehicle
- */
 class Car extends LandVehicle {
     private int doorCount;
     private String bodyStyle;
@@ -161,11 +117,6 @@ class Car extends LandVehicle {
     /**
      * Constructor for Car
      * @param make Manufacturer
-     * @param model Model
-     * @param year Year
-     * @param fuelType Fuel type
-     * @param transmissionType Transmission type
-     * @param doorCount Number of doors
      * @param bodyStyle Body style (Sedan, SUV, etc.)
      */
     public Car(String make, String model, int year, String fuelType, 
@@ -182,20 +133,13 @@ class Car extends LandVehicle {
         System.out.println("Body Style: " + bodyStyle);
     }
     
-    /**
-     * Special car method to honk horn
-     */
     public void honkHorn() {
         System.out.println("Honk! Honk! from " + make + " " + model);
     }
 }
 
-/**
- * Main class to demonstrate the vehicle hierarchy
- */
 public class VehicleDemo {
     public static void main(String[] args) {
-        // Create instances of different vehicle types
         Car myCar = new Car("Toyota", "Camry", 2022, "Gasoline", 
                            "Automatic", 4, "Sedan");
         
@@ -205,7 +149,6 @@ public class VehicleDemo {
         AirVehicle myPlane = new AirVehicle("Cessna", "172", 2020, 
                                           "Avgas", 13000, 1);
         
-        // Demonstrate functionality
         System.out.println("----- Car Details -----");
         myCar.displayDetails();
         myCar.startEngine();

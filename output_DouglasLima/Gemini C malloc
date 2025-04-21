@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/**
+ * @brief Main function to calculate the sum of integers entered by the user.
+ *
+ * This program prompts the user to enter the number of integers they want to sum,
+ * then dynamically allocates memory to store those integers. It then reads the
+ * integers from the user, calculates their sum, and prints the result.
+ * Finally, it releases the allocated memory.
+ *
+ * @return 0 if the program executes successfully, 1 if memory allocation fails.
+ */
+int main() {
+    int *arr;   // Pointer to the dynamically allocated array of integers.
+    int n;      // Number of elements the user wants to enter.
+    int sum = 0; // Variable to store the sum of the integers, initialized to 0.
+
+    // Prompt the user to enter the number of elements.
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    // Dynamically allocate memory for 'n' integers using malloc.
+    arr = (int*)malloc(n * sizeof(int));
+
+    // Check if memory allocation was successful.
+    if (arr == NULL) {
+        printf("Memory allocation failed!\n");
+        exit(1); // Exit the program with an error code if allocation failed.
+    }
+
+    // Prompt the user to enter the 'n' integers.
+    printf("Enter %d integers:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]); // Read each integer entered by the user and store it in the array.
+    }
+
+    // Calculate the sum of the integers stored in the array.
+    for (int i = 0; i < n; i++) {
+        sum += arr[i]; // Add each element of the array to the 'sum' variable.
+    }
+
+    // Print the calculated sum.
+    printf("Sum = %d\n", sum);
+
+    // Release the dynamically allocated memory using free to prevent memory leaks.
+    free(arr);
+
+    return 0; // Indicate successful program execution.
+}

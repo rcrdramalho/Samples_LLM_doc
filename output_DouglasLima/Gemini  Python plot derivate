@@ -1,0 +1,81 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import sympy as sp
+
+def derive_and_plot():
+    """
+    Main function to demonstrate symbolic equation derivation using SymPy
+    and plotting of the original equation and its first derivative using Matplotlib.
+
+    This function performs the following steps:
+    1. Defines a symbolic variable 'x' using SymPy.
+    2. Defines a polynomial equation as a SymPy expression.
+    3. Calculates the first derivative of the equation with respect to 'x' using SymPy's 'diff' function.
+    4. Prints the original equation and its derivative.
+    5. Converts the SymPy expressions for the equation and its derivative into NumPy-compatible
+       functions using SymPy's 'lambdify' function. This allows for efficient numerical evaluation.
+    6. Creates an array of 'x' values using NumPy's 'linspace' for plotting.
+    7. Evaluates the original function and its derivative at the generated 'x' values using the
+       NumPy-compatible functions.
+    8. Generates a Matplotlib figure with two subplots:
+       - The left subplot displays the plot of the original function against 'x'.
+       - The right subplot displays the plot of the first derivative against 'x'.
+    9. Each subplot includes a title, axis labels, a grid, and a legend showing the equation.
+    10. 'plt.tight_layout()' is used to adjust subplot parameters for a tight layout.
+    11. 'plt.show()' displays the generated plot.
+    """
+
+    # Define the symbolic variable 'x' using SymPy.
+    x = sp.Symbol('x')
+
+    # Define the polynomial equation as a SymPy expression.
+    equation = x**3 - 2*x**2 + 5*x - 3
+
+    # Calculate the first derivative of the equation with respect to 'x'.
+    derivative = sp.diff(equation, x)
+
+    # Print the original equation and its calculated first derivative.
+    print("Original equation:", equation)
+    print("First derivative:", derivative)
+
+    # Convert the SymPy expressions into NumPy-compatible functions for efficient evaluation.
+    f = sp.lambdify(x, equation, 'numpy')   # 'f' can now evaluate the equation for NumPy arrays.
+    df = sp.lambdify(x, derivative, 'numpy') # 'df' can now evaluate the derivative for NumPy arrays.
+
+    # Create an array of 400 evenly spaced 'x' values between -5 and 5 for plotting.
+    x_vals = np.linspace(-5, 5, 400)
+
+    # Evaluate the original function and its derivative at each 'x' value.
+    y_vals = f(x_vals)
+    dy_vals = df(x_vals)
+
+    # Create a Matplotlib figure with a size of 12x6 inches.
+    plt.figure(figsize=(12, 6))
+
+    # Create the first subplot for the original function (1 row, 2 columns, 1st subplot).
+    plt.subplot(1, 2, 1)
+    plt.plot(x_vals, y_vals, label=f'f(x) = {equation}', color='blue')
+    plt.title('Original Function')
+    plt.xlabel('x')
+    plt.ylabel('f(x)')
+    plt.grid(True)
+    plt.legend()
+
+    # Create the second subplot for the first derivative (1 row, 2 columns, 2nd subplot).
+    plt.subplot(1, 2, 2)
+    plt.plot(x_vals, dy_vals, label=f"f'(x) = {derivative}", color='red')
+    plt.title('First Derivative')
+    plt.xlabel('x')
+    plt.ylabel("f'(x)")
+    plt.grid(True)
+    plt.legend()
+
+    # Adjust subplot parameters to give a tight layout.
+    plt.tight_layout()
+
+    # Display the generated plot.
+    plt.show()
+
+# Call the main function to execute the derivation and plotting.
+if __name__ == "__main__":
+    derive_and_plot()

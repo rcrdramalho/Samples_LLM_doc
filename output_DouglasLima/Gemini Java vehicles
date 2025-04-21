@@ -1,0 +1,232 @@
+abstract class Vehicle {
+    protected String make;
+    protected String model;
+    protected int year;
+    protected String fuelType;
+
+    /**
+     * Constructor for the Vehicle class.
+     * Initializes the basic attributes common to all vehicles.
+     * @param make The manufacturer of the vehicle.
+     * @param model The specific model of the vehicle.
+     * @param year The manufacturing year of the vehicle.
+     * @param fuelType The type of fuel the vehicle uses.
+     */
+    public Vehicle(String make, String model, int year, String fuelType) {
+        this.make = make;
+        this.model = model;
+        this.year = year;
+        this.fuelType = fuelType;
+    }
+
+    /**
+     * Abstract method to display the specific details of a vehicle.
+     * Subclasses must implement this method to show their unique attributes.
+     */
+    public abstract void displayDetails();
+
+    /**
+     * Starts the engine of the vehicle.
+     * This is a common behavior for all vehicles.
+     */
+    public void startEngine() {
+        System.out.println("Starting the engine of " + make + " " + model);
+    }
+
+    /**
+     * Stops the engine of the vehicle.
+     * This is another common behavior for all vehicles.
+     */
+    public void stopEngine() {
+        System.out.println("Stopping the engine of " + make + " " + model);
+    }
+}
+
+class LandVehicle extends Vehicle {
+    protected int numberOfWheels;
+    protected String transmissionType;
+
+    /**
+     * Constructor for the LandVehicle class.
+     * Initializes attributes specific to land vehicles, inheriting from the Vehicle class.
+     * @param make The manufacturer of the land vehicle.
+     * @param model The specific model of the land vehicle.
+     * @param year The manufacturing year of the land vehicle.
+     * @param fuelType The type of fuel the land vehicle uses.
+     * @param numberOfWheels The number of wheels the land vehicle has.
+     * @param transmissionType The type of transmission (e.g., "Automatic", "Manual").
+     */
+    public LandVehicle(String make, String model, int year, String fuelType,
+                       int numberOfWheels, String transmissionType) {
+        super(make, model, year, fuelType);
+        this.numberOfWheels = numberOfWheels;
+        this.transmissionType = transmissionType;
+    }
+
+    /**
+     * Overrides the displayDetails method to include information specific to land vehicles.
+     */
+    @Override
+    public void displayDetails() {
+        System.out.println("Land Vehicle: " + year + " " + make + " " + model);
+        System.out.println("Fuel Type: " + fuelType);
+        System.out.println("Wheels: " + numberOfWheels);
+        System.out.println("Transmission: " + transmissionType);
+    }
+}
+
+class WaterVehicle extends Vehicle {
+    protected boolean hasSail;
+    protected double displacement;
+
+    /**
+     * Constructor for the WaterVehicle class.
+     * Initializes attributes specific to water vehicles, inheriting from the Vehicle class.
+     * @param make The manufacturer of the water vehicle.
+     * @param model The specific model of the water vehicle.
+     * @param year The manufacturing year of the water vehicle.
+     * @param fuelType The type of fuel the water vehicle uses.
+     * @param hasSail Indicates whether the water vehicle has a sail.
+     * @param displacement The displacement of the water vehicle in tons.
+     */
+    public WaterVehicle(String make, String model, int year, String fuelType,
+                        boolean hasSail, double displacement) {
+        super(make, model, year, fuelType);
+        this.hasSail = hasSail;
+        this.displacement = displacement;
+    }
+
+    /**
+     * Overrides the displayDetails method to include information specific to water vehicles.
+     */
+    @Override
+    public void displayDetails() {
+        System.out.println("Water Vehicle: " + year + " " + make + " " + model);
+        System.out.println("Fuel Type: " + fuelType);
+        System.out.println("Has Sail: " + (hasSail ? "Yes" : "No"));
+        System.out.println("Displacement: " + displacement + " tons");
+    }
+
+    /**
+     * Specific behavior for water vehicles: dropping anchor.
+     */
+    public void dropAnchor() {
+        System.out.println("Dropping anchor for " + make + " " + model);
+    }
+}
+
+class AirVehicle extends Vehicle {
+    protected int maxAltitude;
+    protected int engineCount;
+
+    /**
+     * Constructor for the AirVehicle class.
+     * Initializes attributes specific to air vehicles, inheriting from the Vehicle class.
+     * @param make The manufacturer of the air vehicle.
+     * @param model The specific model of the air vehicle.
+     * @param year The manufacturing year of the air vehicle.
+     * @param fuelType The type of fuel the air vehicle uses.
+     * @param maxAltitude The maximum altitude the air vehicle can reach in feet.
+     * @param engineCount The number of engines the air vehicle has.
+     */
+    public AirVehicle(String make, String model, int year, String fuelType,
+                      int maxAltitude, int engineCount) {
+        super(make, model, year, fuelType);
+        this.maxAltitude = maxAltitude;
+        this.engineCount = engineCount;
+    }
+
+    /**
+     * Overrides the displayDetails method to include information specific to air vehicles.
+     */
+    @Override
+    public void displayDetails() {
+        System.out.println("Air Vehicle: " + year + " " + make + " " + model);
+        System.out.println("Fuel Type: " + fuelType);
+        System.out.println("Max Altitude: " + maxAltitude + " ft");
+        System.out.println("Engine Count: " + engineCount);
+    }
+
+    /**
+     * Specific behavior for air vehicles: taking off.
+     */
+    public void takeOff() {
+        System.out.println(make + " " + model + " is taking off!");
+    }
+}
+
+class Car extends LandVehicle {
+    private int doorCount;
+    private String bodyStyle;
+
+    /**
+     * Constructor for the Car class.
+     * Initializes attributes specific to cars, inheriting from the LandVehicle class.
+     * It implicitly sets the numberOfWheels to 4 for all cars.
+     * @param make The manufacturer of the car.
+     * @param model The specific model of the car.
+     * @param year The manufacturing year of the car.
+     * @param fuelType The type of fuel the car uses.
+     * @param transmissionType The type of transmission (e.g., "Automatic", "Manual").
+     * @param doorCount The number of doors the car has.
+     * @param bodyStyle The body style of the car (e.g., "Sedan", "SUV", "Hatchback").
+     */
+    public Car(String make, String model, int year, String fuelType,
+               String transmissionType, int doorCount, String bodyStyle) {
+        super(make, model, year, fuelType, 4, transmissionType);
+        this.doorCount = doorCount;
+        this.bodyStyle = bodyStyle;
+    }
+
+    /**
+     * Overrides the displayDetails method to include information specific to cars.
+     * It calls the superclass's displayDetails to show land vehicle details first.
+     */
+    @Override
+    public void displayDetails() {
+        super.displayDetails(); // Call the displayDetails of the LandVehicle class.
+        System.out.println("Doors: " + doorCount);
+        System.out.println("Body Style: " + bodyStyle);
+    }
+
+    /**
+     * Specific behavior for cars: honking the horn.
+     */
+    public void honkHorn() {
+        System.out.println("Honk! Honk! from " + make + " " + model);
+    }
+}
+
+public class VehicleDemo {
+    public static void main(String[] args) {
+        // Create an instance of the Car class.
+        Car myCar = new Car("Toyota", "Camry", 2022, "Gasoline",
+                            "Automatic", 4, "Sedan");
+
+        // Create an instance of the WaterVehicle class.
+        WaterVehicle myBoat = new WaterVehicle("Bayliner", "Element", 2021,
+                                             "Diesel", false, 1.8);
+
+        // Create an instance of the AirVehicle class.
+        AirVehicle myPlane = new AirVehicle("Cessna", "172", 2020,
+                                            "Avgas", 13000, 1);
+
+        System.out.println("----- Car Details -----");
+        myCar.displayDetails();
+        myCar.startEngine();
+        myCar.honkHorn();
+        myCar.stopEngine();
+
+        System.out.println("\n----- Boat Details -----");
+        myBoat.displayDetails();
+        myBoat.startEngine();
+        myBoat.dropAnchor();
+        myBoat.stopEngine();
+
+        System.out.println("\n----- Plane Details -----");
+        myPlane.displayDetails();
+        myPlane.startEngine();
+        myPlane.takeOff();
+        myPlane.stopEngine();
+    }
+}

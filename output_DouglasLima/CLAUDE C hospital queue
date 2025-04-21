@@ -1,0 +1,278 @@
+/**
+ * Hospital Priority Queue System
+ * 
+ * A system that manages a hospital emergency room queue,
+ * sorting patients by medical priority rather than arrival time.
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#define MAX_PATIENTS 100  // Maximum number of patients the queue can hold
+
+/**
+ * Enumeration of patient priority levels
+ * Patients with lower enum values have higher treatment priority
+ */
+typedef enum {
+    CRITICAL,   // Highest priority, life-threatening conditions
+    SERIOUS,    // Urgent conditions requiring immediate attention
+    MODERATE,   // Non-life-threatening but significant conditions
+    MINOR       // Lowest priority, minor ailments
+} Priority;
+
+/**
+ * Structure to store patient information
+ */
+typedef struct {
+    char name[50];        // Patient's full name
+    int age;              // Patient's age
+    Priority priority;    // Medical priority level
+    time_t arrival_time;  // Timestamp of when patient arrived
+} Patient;
+
+/**
+ * Priority queue implementation for managing patients
+ */
+typedef struct {
+    Patient patients[MAX_PATIENTS];  // Array of patients
+    int size;                        // Current number of patients in queue
+} PriorityQueue;
+
+/**
+ * Initializes an empty priority queue
+ * 
+ * @param pq Pointer to the priority queue to initialize
+ */
+void init_queue(PriorityQueue *pq) {
+    pq->size = 0;
+}
+
+/**
+ * Checks if the priority queue is empty
+ * 
+ * @param pq Pointer to the priority queue
+ * @return 1 if empty, 0 otherwise
+ */
+int is_empty(PriorityQueue *pq) {
+    return pq->size == 0;
+}
+
+/**
+ * Checks if the priority queue is full
+ * 
+ * @param pq Pointer to the priority queue
+ * @return 1 if full, 0 otherwise
+ */
+int is_full(PriorityQueue *pq) {
+    return pq->size == MAX_PATIENTS;
+}
+
+/**
+ * Adds a patient to the priority queue based on their priority level
+ * Patients with higher priority (lower enum value) are placed earlier in the queue
+ * 
+ * @param pq Pointer to the priority queue
+ * @param patient The patient to add to the queue
+ */
+void enqueue(PriorityQueue *pq, Patient patient) {
+    if (is_full(pq)) {
+        printf("Queue is full. Cannot add more patients.\n");
+        return;
+    }
+    
+    int i;
+    // Find the correct position based on priority
+    for (i = pq->size - 1; i >= 0; i--) {
+        if (patient.priority < pq->patients[i].priority) {
+            // Shift higher-priority patients down to make room
+            pq->patients[i + 1] = pq->patients[i];
+        } else {
+            break;  // Found the insertion point
+        }
+    }
+    
+    // Insert the patient at the correct position
+    pq->patients[i + 1] = patient;
+    pq->size++;
+}
+
+/**
+ * Removes and returns the highest priority patient from the queue
+ * 
+ * @param pq Pointer to the priority queue
+ * @return The highest priority patient, or an empty patient if queue is empty
+ */
+Patient dequeue(PriorityQueue *pq) {
+    if (is_empty(pq)) {
+        printf("Queue is empty.\n");
+        Patient empty = {"", 0, MINOR, 0};  // Return empty patient as error indicator
+        return empty;
+    }
+    
+    // Get the highest priority patient (front of queue)
+    Patient patient = pq->patients[0];
+
+    // Shift all other patients up by one position
+    for (int i = 1; i < pq->size; i++) {
+        pq->patients[i - 1] = pq->patients[i];
+    }
+    
+    pq->size--;
+    return patient;
+}
+
+/**
+ * Displays all patients in the queue in a formatted table
+ * 
+ * @param pq Pointer to the priority queue
+ */
+void display_queue(PriorityQueue *pq) {
+    if (is_empty(pq)) {
+        printf("No patients in the queue.\n");
+        return;
+    }
+    
+    printf("\nCurrent Hospital Queue:\n");
+    printf("-------------------------------------------------\n");
+    printf("| %-20s | %-3s | %-10s | %-10s |\n", "Name", "Age", "Priority", "Arrival Time");
+    printf("-------------------------------------------------\n");
+    
+    for (int i = 0; i < pq->size; i++) {
+        // Convert priority enum to string representation
+        char priority_str[10];
+        switch (pq->patients[i].priority) {
+            case CRITICAL: strcpy(priority_str, "Critical"); break;
+            case SERIOUS: strcpy(priority_str, "Serious"); break;
+            case MODERATE: strcpy(priority_str, "Moderate"); break;
+            case MINOR: strcpy(priority_str, "Minor"); break;
+        }
+        
+        // Format arrival time
+        char time_str[20];
+        strftime(time_str, sizeof(time_str), "%H:%M:%S", localtime(&pq->patients[i].arrival_time));
+        
+        // Print patient information
+        printf("| %-20s | %-3d | %-10s | %-10s |\n", 
+               pq->patients[i].name, 
+               pq->patients[i].age, 
+               priority_str,
+               time_str);
+    }
+    printf("-------------------------------------------------\n");
+}
+
+/**
+ * Generates a patient with random attributes for simulation purposes
+ * 
+ * @return A randomly generated patient
+ */
+Patient generate_random_patient() {
+    const char *names[] = {"John Doe", "Jane Smith", "Robert Johnson", "Emily Davis", 
+                          "Michael Brown", "Sarah Wilson", "David Taylor", "Jessica Anderson"};
+    const int num_names = sizeof(names) / sizeof(names[0]);
+    
+    Patient p;
+    strcpy(p.name, names[rand() % num_names]);  // Random name from list
+    p.age = 1 + rand() % 100;                   // Random age between 1-100
+    p.priority = rand() % 4;                    // Random priority level
+    p.arrival_time = time(NULL);                // Current time
+    
+    return p;
+}
+
+/**
+ * Main function - implements a menu-driven interface for the hospital queue system
+ */
+int main() {
+    PriorityQueue pq;
+    init_queue(&pq);
+    srand(time(NULL));  // Seed random number generator
+    
+    int choice;
+    do {
+        // Display menu options
+        printf("\nHospital Priority Queue System\n");
+        printf("1. Add Patient\n");
+        printf("2. Add Random Patient (for simulation)\n");
+        printf("3. Process Next Patient\n");
+        printf("4. View Current Queue\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        
+        // Process menu selection
+        switch (choice) {
+            case 1: {  // Add a patient with user-provided information
+                if (is_full(&pq)) {
+                    printf("Queue is full. Cannot add more patients.\n");
+                    break;
+                }
+                
+                Patient p;
+                printf("Enter patient name: ");
+                scanf(" %[^\n]", p.name);  // Read name with spaces
+                printf("Enter patient age: ");
+                scanf("%d", &p.age);
+                printf("Enter priority (0-Critical, 1-Serious, 2-Moderate, 3-Minor): ");
+                scanf("%d", (int*)&p.priority);
+                p.arrival_time = time(NULL);
+                
+                enqueue(&pq, p);
+                printf("Patient added to the queue.\n");
+                break;
+            }
+            
+            case 2: {  // Add a randomly generated patient
+                Patient p = generate_random_patient();
+                enqueue(&pq, p);
+                printf("Random patient added to the queue.\n");
+                break;
+            }
+            
+            case 3: {  // Process (remove) the highest priority patient
+                if (is_empty(&pq)) {
+                    printf("No patients in the queue.\n");
+                } else {
+                    Patient p = dequeue(&pq);
+                    
+                    // Convert priority enum to string for display
+                    char priority_str[10];
+                    switch (p.priority) {
+                        case CRITICAL: strcpy(priority_str, "Critical"); break;
+                        case SERIOUS: strcpy(priority_str, "Serious"); break;
+                        case MODERATE: strcpy(priority_str, "Moderate"); break;
+                        case MINOR: strcpy(priority_str, "Minor"); break;
+                    }
+                    
+                    // Format arrival time for display
+                    char time_str[20];
+                    strftime(time_str, sizeof(time_str), "%H:%M:%S", localtime(&p.arrival_time));
+                    
+                    // Display processed patient information
+                    printf("\nProcessing patient:\n");
+                    printf("Name: %s\n", p.name);
+                    printf("Age: %d\n", p.age);
+                    printf("Priority: %s\n", priority_str);
+                    printf("Arrival Time: %s\n", time_str);
+                }
+                break;
+            }
+            
+            case 4:  // Display all patients in the queue
+                display_queue(&pq);
+                break;
+                
+            case 5:  // Exit the program
+                printf("Exiting...\n");
+                break;
+                
+            default:  // Invalid menu option
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 5);
+    
+    return 0;
+}

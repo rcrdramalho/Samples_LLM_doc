@@ -1,0 +1,221 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#define MAX_PATIENTS 100
+
+// Define os níveis de prioridade dos pacientes
+typedef enum {
+    CRITICAL,   // Prioridade mais alta
+    SERIOUS,
+    MODERATE,
+    MINOR        // Prioridade mais baixa
+} Priority;
+
+// Estrutura que representa um paciente
+typedef struct {
+    char name[50];         // Nome do paciente
+    int age;               // Idade
+    Priority priority;     // Nível de prioridade
+    time_t arrival_time;   // Timestamp de chegada
+} Patient;
+
+// Fila de prioridade baseada em array
+typedef struct {
+    Patient patients[MAX_PATIENTS];  // Array de pacientes
+    int size;                        // Número atual de pacientes
+} PriorityQueue;
+
+// Inicializa a fila com tamanho zero
+void init_queue(PriorityQueue *pq) {
+    pq->size = 0;
+}
+
+// Verifica se a fila está vazia
+int is_empty(PriorityQueue *pq) {
+    return pq->size == 0;
+}
+
+// Verifica se a fila está cheia
+int is_full(PriorityQueue *pq) {
+    return pq->size == MAX_PATIENTS;
+}
+
+// Adiciona um paciente à fila mantendo a ordem de prioridade
+void enqueue(PriorityQueue *pq, Patient patient) {
+    if (is_full(pq)) {
+        printf("Queue is full. Cannot add more patients.\n");
+        return;
+    }
+    
+    // Encontra a posição correta baseada na prioridade (ordem decrescente)
+    int i;
+    for (i = pq->size - 1; i >= 0; i--) {
+        if (patient.priority < pq->patients[i].priority) {
+            pq->patients[i + 1] = pq->patients[i];  // Desloca pacientes para a direita
+        } else {
+            break;
+        }
+    }
+    
+    // Insere o paciente na posição correta
+    pq->patients[i + 1] = patient;
+    pq->size++;
+}
+
+// Remove e retorna o paciente com maior prioridade (início da fila)
+Patient dequeue(PriorityQueue *pq) {
+    if (is_empty(pq)) {
+        printf("Queue is empty.\n");
+        Patient empty = {"", 0, MINOR, 0};
+        return empty;
+    }
+    
+    Patient patient = pq->patients[0];  // Pega o primeiro paciente
+
+    // Desloca todos os pacientes para a esquerda
+    for (int i = 1; i < pq->size; i++) {
+        pq->patients[i - 1] = pq->patients[i];
+    }
+    
+    pq->size--;
+    return patient;
+}
+
+// Exibe a fila atual formatada em uma tabela
+void display_queue(PriorityQueue *pq) {
+    if (is_empty(pq)) {
+        printf("No patients in the queue.\n");
+        return;
+    }
+    
+    printf("\nCurrent Hospital Queue:\n");
+    printf("-------------------------------------------------\n");
+    printf("| %-20s | %-3s | %-10s | %-10s |\n", "Name", "Age", "Priority", "Arrival Time");
+    printf("-------------------------------------------------\n");
+    
+    for (int i = 0; i < pq->size; i++) {
+        // Converte prioridade para string
+        char priority_str[10];
+        switch (pq->patients[i].priority) {
+            case CRITICAL: strcpy(priority_str, "Critical"); break;
+            case SERIOUS:  strcpy(priority_str, "Serious");  break;
+            case MODERATE: strcpy(priority_str, "Moderate"); break;
+            case MINOR:    strcpy(priority_str, "Minor");    break;
+        }
+        
+        // Formata o timestamp para hora legível
+        char time_str[20];
+        strftime(time_str, sizeof(time_str), "%H:%M:%S", localtime(&pq->patients[i].arrival_time));
+        
+        printf("| %-20s | %-3d | %-10s | %-10s |\n", 
+               pq->patients[i].name, 
+               pq->patients[i].age, 
+               priority_str,
+               time_str);
+    }
+    printf("-------------------------------------------------\n");
+}
+
+// Gera um paciente aleatório para simulação
+Patient generate_random_patient() {
+    const char *names[] = {"John Doe", "Jane Smith", "Robert Johnson", "Emily Davis", 
+                          "Michael Brown", "Sarah Wilson", "David Taylor", "Jessica Anderson"};
+    const int num_names = sizeof(names) / sizeof(names[0]);
+    
+    Patient p;
+    strcpy(p.name, names[rand() % num_names]);  // Nome aleatório
+    p.age = 1 + rand() % 100;                  // Idade entre 1-100
+    p.priority = rand() % 4;                   // Prioridade aleatória
+    p.arrival_time = time(NULL);               // Timestamp atual
+    
+    return p;
+}
+
+// Menu principal do sistema
+int main() {
+    PriorityQueue pq;
+    init_queue(&pq);
+    srand(time(NULL));  // Inicializa semente para números aleatórios
+    
+    int choice;
+    do {
+        printf("\nHospital Priority Queue System\n");
+        printf("1. Add Patient\n");
+        printf("2. Add Random Patient (for simulation)\n");
+        printf("3. Process Next Patient\n");
+        printf("4. View Current Queue\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        
+        switch (choice) {
+            case 1: {  // Adiciona paciente manualmente
+                if (is_full(&pq)) {
+                    printf("Queue is full. Cannot add more patients.\n");
+                    break;
+                }
+                
+                Patient p;
+                printf("Enter patient name: ");
+                scanf(" %[^\n]", p.name);
+                printf("Enter patient age: ");
+                scanf("%d", &p.age);
+                printf("Enter priority (0-Critical, 1-Serious, 2-Moderate, 3-Minor): ");
+                scanf("%d", (int*)&p.priority);
+                p.arrival_time = time(NULL);
+                
+                enqueue(&pq, p);
+                printf("Patient added to the queue.\n");
+                break;
+            }
+            
+            case 2: {  // Adiciona paciente aleatório
+                Patient p = generate_random_patient();
+                enqueue(&pq, p);
+                printf("Random patient added to the queue.\n");
+                break;
+            }
+            
+            case 3: {  // Processa o próximo paciente
+                if (is_empty(&pq)) {
+                    printf("No patients in the queue.\n");
+                } else {
+                    Patient p = dequeue(&pq);
+                    // Converte prioridade e timestamp para formato legível
+                    char priority_str[10];
+                    switch (p.priority) {
+                        case CRITICAL: strcpy(priority_str, "Critical"); break;
+                        case SERIOUS:  strcpy(priority_str, "Serious");  break;
+                        case MODERATE: strcpy(priority_str, "Moderate"); break;
+                        case MINOR:    strcpy(priority_str, "Minor");    break;
+                    }
+                    
+                    char time_str[20];
+                    strftime(time_str, sizeof(time_str), "%H:%M:%S", localtime(&p.arrival_time));
+                    
+                    printf("\nProcessing patient:\n");
+                    printf("Name: %s\n", p.name);
+                    printf("Age: %d\n", p.age);
+                    printf("Priority: %s\n", priority_str);
+                    printf("Arrival Time: %s\n", time_str);
+                }
+                break;
+            }
+            
+            case 4:  // Mostra a fila completa
+                display_queue(&pq);
+                break;
+                
+            case 5:  // Sai do programa
+                printf("Exiting...\n");
+                break;
+                
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 5);
+    
+    return 0;
+}

@@ -1,3 +1,11 @@
+/**
+ * A class hierarchy demonstrating inheritance and polymorphism
+ * for different types of vehicles (land, water, air)
+ */
+
+/**
+ * Base abstract class for all vehicle types
+ */
 abstract class Vehicle {
     protected String make;
     protected String model;
@@ -11,6 +19,7 @@ abstract class Vehicle {
         this.fuelType = fuelType;
     }
 
+    // Abstract method that each subclass must implement
     public abstract void displayDetails();
 
     public void startEngine() {
@@ -22,6 +31,9 @@ abstract class Vehicle {
     }
 }
 
+/**
+ * Represents vehicles that travel on land
+ */
 class LandVehicle extends Vehicle {
     protected int numberOfWheels;
     protected String transmissionType;
@@ -42,9 +54,12 @@ class LandVehicle extends Vehicle {
     }
 }
 
+/**
+ * Represents vehicles that travel on water
+ */
 class WaterVehicle extends Vehicle {
     protected boolean hasSail;
-    protected double displacement;
+    protected double displacement;  // Measured in tons
 
     public WaterVehicle(String make, String model, int year, String fuelType, 
                        boolean hasSail, double displacement) {
@@ -66,8 +81,11 @@ class WaterVehicle extends Vehicle {
     }
 }
 
+/**
+ * Represents vehicles that travel through air
+ */
 class AirVehicle extends Vehicle {
-    protected int maxAltitude;
+    protected int maxAltitude;  // Maximum altitude in feet
     protected int engineCount;
     
     public AirVehicle(String make, String model, int year, String fuelType, 
@@ -90,12 +108,16 @@ class AirVehicle extends Vehicle {
     }
 }
 
+/**
+ * Specific implementation of a LandVehicle
+ */
 class Car extends LandVehicle {
     private int doorCount;
     private String bodyStyle;
 
     public Car(String make, String model, int year, String fuelType, 
               String transmissionType, int doorCount, String bodyStyle) {
+        // Cars always have 4 wheels
         super(make, model, year, fuelType, 4, transmissionType);
         this.doorCount = doorCount;
         this.bodyStyle = bodyStyle;
@@ -115,6 +137,7 @@ class Car extends LandVehicle {
 
 public class VehicleDemo {
     public static void main(String[] args) {
+        // Create instances of different vehicle types
         Car myCar = new Car("Toyota", "Camry", 2022, "Gasoline", 
                            "Automatic", 4, "Sedan");
         
@@ -124,6 +147,7 @@ public class VehicleDemo {
         AirVehicle myPlane = new AirVehicle("Cessna", "172", 2020, 
                                           "Avgas", 13000, 1);
         
+        // Demonstrate polymorphic behavior
         System.out.println("----- Car Details -----");
         myCar.displayDetails();
         myCar.startEngine();

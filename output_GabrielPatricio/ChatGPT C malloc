@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int *arr;
+    int n, sum = 0;
+
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    // Aloca dinamicamente memória para armazenar 'n' inteiros
+    arr = (int*)malloc(n * sizeof(int));
+
+    // Verifica se a alocação de memória foi bem-sucedida
+    if (arr == NULL) {
+        printf("Memory allocation failed!");
+        exit(1);
+    }
+
+    printf("Enter %d integers:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);  // Lê os elementos do array
+    }
+
+    // Calcula a soma dos elementos do array
+    for (int i = 0; i < n; i++) {
+        sum += arr[i];
+    }
+
+    printf("Sum = %d\n", sum);
+
+    // Libera a memória alocada dinamicamente
+    free(arr);
+
+    return 0;
+}

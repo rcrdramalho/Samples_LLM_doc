@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int main() {
+
+  int n, i, flag = 0;
+  printf("Enter a positive integer: ");
+  scanf("%d", &n);
+
+  // Números 0 e 1 não são primos
+  if (n == 0 || n == 1)
+    flag = 1;
+
+  // Verifica se 'n' tem algum divisor além de 1 e ele mesmo
+  for (i = 2; i <= n / 2; ++i) {
+    if (n % i == 0) {
+      flag = 1;
+      break;  // Interrompe o loop assim que encontrar um divisor
+    }
+  }
+
+  // Exibe se o número é primo com base no valor de 'flag'
+  if (flag == 0)
+    printf("%d is a prime number.", n);
+  else
+    printf("%d is not a prime number.", n);
+
+  return 0;
+}

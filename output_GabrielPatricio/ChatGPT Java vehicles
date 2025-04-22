@@ -1,0 +1,156 @@
+// Classe abstrata base para todos os veículos
+abstract class Vehicle {
+    protected String make;
+    protected String model;
+    protected int year;
+    protected String fuelType;
+    
+    public Vehicle(String make, String model, int year, String fuelType) {
+        this.make = make;
+        this.model = model;
+        this.year = year;
+        this.fuelType = fuelType;
+    }
+
+    // Método abstrato que deve ser implementado pelas subclasses
+    public abstract void displayDetails();
+
+    // Comportamentos comuns a todos os veículos
+    public void startEngine() {
+        System.out.println("Starting the engine of " + make + " " + model);
+    }
+
+    public void stopEngine() {
+        System.out.println("Stopping the engine of " + make + " " + model);
+    }
+}
+
+// Representa veículos terrestres, herdando de Vehicle
+class LandVehicle extends Vehicle {
+    protected int numberOfWheels;
+    protected String transmissionType;
+    
+    public LandVehicle(String make, String model, int year, String fuelType, 
+                      int numberOfWheels, String transmissionType) {
+        super(make, model, year, fuelType);
+        this.numberOfWheels = numberOfWheels;
+        this.transmissionType = transmissionType;
+    }
+    
+    @Override
+    public void displayDetails() {
+        System.out.println("Land Vehicle: " + year + " " + make + " " + model);
+        System.out.println("Fuel Type: " + fuelType);
+        System.out.println("Wheels: " + numberOfWheels);
+        System.out.println("Transmission: " + transmissionType);
+    }
+}
+
+// Representa veículos aquáticos
+class WaterVehicle extends Vehicle {
+    protected boolean hasSail;
+    protected double displacement; // deslocamento em toneladas
+
+    public WaterVehicle(String make, String model, int year, String fuelType, 
+                       boolean hasSail, double displacement) {
+        super(make, model, year, fuelType);
+        this.hasSail = hasSail;
+        this.displacement = displacement;
+    }
+    
+    @Override
+    public void displayDetails() {
+        System.out.println("Water Vehicle: " + year + " " + make + " " + model);
+        System.out.println("Fuel Type: " + fuelType);
+        System.out.println("Has Sail: " + (hasSail ? "Yes" : "No"));
+        System.out.println("Displacement: " + displacement + " tons");
+    }
+
+    // Comportamento específico de veículos aquáticos
+    public void dropAnchor() {
+        System.out.println("Dropping anchor for " + make + " " + model);
+    }
+}
+
+// Representa veículos aéreos
+class AirVehicle extends Vehicle {
+    protected int maxAltitude;   // altitude máxima em pés
+    protected int engineCount;   // número de motores
+    
+    public AirVehicle(String make, String model, int year, String fuelType, 
+                     int maxAltitude, int engineCount) {
+        super(make, model, year, fuelType);
+        this.maxAltitude = maxAltitude;
+        this.engineCount = engineCount;
+    }
+    
+    @Override
+    public void displayDetails() {
+        System.out.println("Air Vehicle: " + year + " " + make + " " + model);
+        System.out.println("Fuel Type: " + fuelType);
+        System.out.println("Max Altitude: " + maxAltitude + " ft");
+        System.out.println("Engine Count: " + engineCount);
+    }
+
+    // Comportamento específico de veículos aéreos
+    public void takeOff() {
+        System.out.println(make + " " + model + " is taking off!");
+    }
+}
+
+// Subclasse específica de LandVehicle que representa um carro
+class Car extends LandVehicle {
+    private int doorCount;
+    private String bodyStyle;
+
+    public Car(String make, String model, int year, String fuelType, 
+              String transmissionType, int doorCount, String bodyStyle) {
+        super(make, model, year, fuelType, 4, transmissionType); // Carro com 4 rodas
+        this.doorCount = doorCount;
+        this.bodyStyle = bodyStyle;
+    }
+    
+    @Override
+    public void displayDetails() {
+        super.displayDetails(); // Chama detalhes comuns de LandVehicle
+        System.out.println("Doors: " + doorCount);
+        System.out.println("Body Style: " + bodyStyle);
+    }
+
+    public void honkHorn() {
+        System.out.println("Honk! Honk! from " + make + " " + model);
+    }
+}
+
+public class VehicleDemo {
+    public static void main(String[] args) {
+        // Instancia veículos com características distintas
+        Car myCar = new Car("Toyota", "Camry", 2022, "Gasoline", 
+                           "Automatic", 4, "Sedan");
+        
+        WaterVehicle myBoat = new WaterVehicle("Bayliner", "Element", 2021, 
+                                            "Diesel", false, 1.8);
+        
+        AirVehicle myPlane = new AirVehicle("Cessna", "172", 2020, 
+                                          "Avgas", 13000, 1);
+        
+        // Demonstra uso de polimorfismo e métodos específicos
+        System.out.println("----- Car Details -----");
+        myCar.displayDetails();
+        myCar.startEngine();
+        myCar.honkHorn();
+        myCar.stopEngine();
+        
+        System.out.println("\n----- Boat Details -----");
+        myBoat.displayDetails();
+        myBoat.startEngine();
+        myBoat.dropAnchor();
+        myBoat.stopEngine();
+        
+        System.out.println("\n----- Plane Details -----");
+        myPlane.displayDetails();
+        myPlane.startEngine();
+        myPlane.takeOff();
+        myPlane.stopEngine();
+    }
+}

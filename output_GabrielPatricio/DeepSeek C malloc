@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>  // Necessário para malloc() e free()
+
+int main() {
+    int *arr;        // Ponteiro para o array dinâmico
+    int n, sum = 0;  // n = número de elementos, sum = acumulador da soma
+
+    // Solicita ao usuário o número de elementos
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    // Aloca memória dinamicamente para o array
+    arr = (int*)malloc(n * sizeof(int));
+    
+    // Verifica se a alocação de memória foi bem-sucedida
+    if (arr == NULL) {
+        printf("Memory allocation failed!");
+        exit(1);  // Encerra o programa com código de erro
+    }
+
+    // Solicita os valores ao usuário
+    printf("Enter %d integers:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);  // Lê cada elemento do array
+    }
+
+    // Calcula a soma dos elementos do array
+    for (int i = 0; i < n; i++) {
+        sum += arr[i];
+    }
+
+    // Exibe o resultado da soma
+    printf("Sum = %d\n", sum);
+
+    // Libera a memória alocada dinamicamente
+    free(arr);
+
+    return 0;  // Retorna 0 indicando sucesso
+}

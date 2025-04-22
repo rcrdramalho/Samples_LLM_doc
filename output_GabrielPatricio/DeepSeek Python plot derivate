@@ -1,0 +1,63 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import sympy as sp  # Biblioteca para matemática simbólica
+
+def derive_and_plot():
+    """
+    Função principal que demonstra a derivação de uma equação matemática
+    e plota tanto a função original quanto sua derivada.
+    """
+    
+    # Define a variável simbólica x
+    x = sp.Symbol('x')
+
+    # Cria a equação polinomial: f(x) = x³ - 2x² + 5x - 3
+    equation = x**3 - 2*x**2 + 5*x - 3
+    
+    # Calcula a primeira derivada da equação
+    derivative = sp.diff(equation, x)
+
+    # Exibe as equações no console
+    print("Equação original:", equation)
+    print("Primeira derivada:", derivative)
+
+    # Converte as expressões simbólicas para funções numéricas
+    f = sp.lambdify(x, equation, 'numpy')   # f(x)
+    df = sp.lambdify(x, derivative, 'numpy')  # f'(x)
+    
+    # Cria um array de valores de x para plotagem (-5 a 5 com 400 pontos)
+    x_vals = np.linspace(-5, 5, 400)
+    
+    # Calcula os valores de y para a função original e sua derivada
+    y_vals = f(x_vals)
+    dy_vals = df(x_vals)
+
+    # Configura a figura com dois subplots lado a lado
+    plt.figure(figsize=(12, 6))
+
+    # Subplot 1: Função original
+    plt.subplot(1, 2, 1)
+    plt.plot(x_vals, y_vals, label=f'f(x) = {equation}', color='blue')
+    plt.title('Função Original')
+    plt.xlabel('x')
+    plt.ylabel('f(x)')
+    plt.grid(True)
+    plt.legend()
+
+    # Subplot 2: Derivada da função
+    plt.subplot(1, 2, 2)
+    plt.plot(x_vals, dy_vals, label=f"f'(x) = {derivative}", color='red')
+    plt.title('Primeira Derivada')
+    plt.xlabel('x')
+    plt.ylabel("f'(x)")
+    plt.grid(True)
+    plt.legend()
+
+    # Ajusta o layout para evitar sobreposição
+    plt.tight_layout()
+    
+    # Mostra os gráficos
+    plt.show()
+
+# Chama a função principal
+derive_and_plot()

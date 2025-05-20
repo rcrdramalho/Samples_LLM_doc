@@ -1,0 +1,61 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import sympy as sp
+
+def derive_and_plot():
+    """
+    Deriva simbolicamente uma função polinomial e plota tanto a função original
+    quanto sua derivada em um intervalo definido.
+
+    Etapas principais:
+    - Criação simbólica da equação.
+    - Cálculo da derivada.
+    - Conversão para funções numéricas (via `lambdify`).
+    - Avaliação e plotagem gráfica da função e sua derivada.
+    
+    @return: Nenhum valor é retornado diretamente. A função imprime e exibe gráficos.
+    """
+
+    x = sp.Symbol('x')  # Variável simbólica para operações algébricas
+
+    equation = x**3 - 2*x**2 + 5*x - 3  # Definição da função simbólica
+
+    derivative = sp.diff(equation, x)  # Cálculo simbólico da primeira derivada
+
+    print("Original equation:", equation)
+    print("First derivative:", derivative)
+
+    # Converte as expressões simbólicas (equation e derivative) em funções numéricas
+    # que podem ser avaliadas usando a biblioteca NumPy.
+    f = sp.lambdify(x, equation, 'numpy')
+    df = sp.lambdify(x, derivative, 'numpy')
+
+    x_vals = np.linspace(-5, 5, 400)  # Cria um array de 400 pontos igualmente espaçados entre -5 e 5.
+
+    # Avalia a função original e sua derivada em cada ponto do array `x_vals`.
+    y_vals = f(x_vals)
+    dy_vals = df(x_vals)
+
+    plt.figure(figsize=(12, 6))
+
+    # Cria o primeiro subplot para a função original.
+    plt.subplot(1, 2, 1)
+    plt.plot(x_vals, y_vals, label=f'f(x) = {equation}', color='blue')
+    plt.title('Original Function')
+    plt.xlabel('x')
+    plt.ylabel('f(x)')
+    plt.grid(True)
+    plt.legend()
+
+    # Cria o segundo subplot para a derivada da função.
+    plt.subplot(1, 2, 2)
+    plt.plot(x_vals, dy_vals, label=f"f'(x) = {derivative}", color='red')
+    plt.title('First Derivative')
+    plt.xlabel('x')
+    plt.ylabel("f'(x)")
+    plt.grid(True)
+    plt.legend()
+
+    # Ajusta o layout para evitar sobreposição de elementos e exibe os gráficos.
+    plt.tight_layout()
+    plt.show()
